@@ -17,5 +17,8 @@ Repo with multiple projects for the Tello
 [tello-sandbox](https://github.com/youngsoul/tello-sandbox)\
 Face tracking Tello project 
 
+[DroneBlocks-Tello-Python](https://github.com/dbaldwin/DroneBlocks-Tello-Python)\
+Github repo that contains Python code that lessons in DroneBlocks Tello Python course
+
 
 
