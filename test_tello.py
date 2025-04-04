@@ -10,15 +10,15 @@ print(f"Battery: {tello.get_battery()}%")
 # Takeoff
 tello.takeoff()
 
-tello.move_up(50)  # move up 50 cm
-tello.move_forward(100)  # move forward 100 cm
+tello.move_up(30) 
+   # move up 50 cm
 
-tello.rotate_clockwise(90) # rotate 90 degrees
-tello.move_forward(50)  # move forward another 50 cm
+tello.rotate_clockwise(180) # rotate 90 degrees
+tello.flip_right()
 
 # Land
 time.sleep(2)
 tello.land()
 
-tello.end()
+
 
