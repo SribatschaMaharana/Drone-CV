@@ -1,6 +1,6 @@
 import cv2
-from tello_controller import TelloController
-from yolo_detector import YOLODetector
+from drone.tello_controller import TelloController
+from vision.yolo_detector import YOLODetector
 
 def main():
     drone = TelloController()
@@ -13,11 +13,20 @@ def main():
         while True:
             try:
                 frame = drone.get_frame()
+
+                if frame is None:
+                    print("[WARN] No frame received.")
+                    continue
+
                 annotated = detector.detect(frame)
                 cv2.imshow("Tello + YOLO Detection", annotated)
 
-                if cv2.waitKey(1) & 0xFF == ord('q'):
+                # Use a slightly longer delay to help with GUI rendering on Mac
+                key = cv2.waitKey(20) & 0xFF
+                if key == ord('q'):
+                    print("[INFO] 'q' pressed. Exiting.")
                     break
+
             except Exception as e:
                 print(f"[ERROR] Frame read or detection failed: {e}")
                 break
