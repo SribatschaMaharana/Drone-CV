@@ -17,8 +17,15 @@ class TelloController:
         return cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
 
     def cleanup(self):
-        self.drone.streamoff()
-        cv2.destroyAllWindows()
+        try:
+            self.drone.streamoff()
+        except Exception as e:
+            print(f"[WARN] Failed to stop stream: {e}")
+        try:
+            cv2.destroyAllWindows()
+        except Exception as e:
+            print(f"[WARN] Failed to close OpenCV windows: {e}")
+
 
     def takeoff(self):
         self.drone.takeoff()
