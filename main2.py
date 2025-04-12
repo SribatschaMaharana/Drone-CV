@@ -1,4 +1,3 @@
-import time
 import cv2
 from drone.tello_controller import TelloController
 from drone.behaviour_controller import BehaviorController
@@ -15,9 +14,7 @@ def main():
 
     try:
         drone.connect()
-        drone.takeoff()
-        drone.drone.move_up(30)
-        print("[INFO] Drone ready. Press 'f' (follow), 'a' (avoid), 'n' (none), 'q' to quit.")
+        print("[INFO] Drone ready. Press 'u' (takeoff), 'd' (land), 'f' (follow), 'a' (avoid), 'n' (none), 't' (toggle tracking), 'q' (quit).")
 
         while True:
             try:
@@ -27,7 +24,6 @@ def main():
                     continue
 
                 annotated_frame = detector.detect(frame)
-
                 tracked_frame, obj_center = color_tracker.detect(annotated_frame)
 
                 key = cv2.waitKey(20) & 0xFF
@@ -35,28 +31,29 @@ def main():
                     print("[INFO] Quit key pressed.")
                     break
 
+                if keys.takeoff_triggered:
+                    drone.takeoff()
+                    keys.takeoff_triggered = False
+
+                if keys.land_triggered:
+                    drone.land()
+                    keys.land_triggered = False
+
                 behavior = keys.behavior
-                action = behavior_controller.decide_action(obj_center, frame.shape, behavior)
+                action = None
 
-                print(f"[DEBUG] Behavior: {behavior}, Action: {action}, Object center: {obj_center}")
+                if keys.tracking_enabled:
+                    action = behavior_controller.decide_action(obj_center, frame.shape, behavior)
+                    print(f"[DEBUG] Behavior: {behavior}, Action: {action}, Object center: {obj_center}")
 
-
-                if action:
-                    print(f"[DEBUG] Executing actions: {action}")
-                    for act in action:
-                        if act == "forward":
-                            drone.drone.move_forward(20)
-                        elif act == "back":
-                            drone.drone.move_back(20)
-                        elif act == "left":
-                            drone.drone.move_left(20)
-                        elif act == "right":
-                            drone.drone.move_right(20)
-                        elif act == "up":
-                            drone.drone.move_up(20)
-                        elif act == "down":
-                            drone.drone.move_down(20)
-                        time.sleep(0.1)
+                    if action:
+                        print(f"[DEBUG] Simulated action(s): {action}")
+                        for act in action:
+                            print(f"[DEBUG] Drone would move {act}.")
+                    else:
+                        print("[DEBUG] No action determined.")
+                else:
+                    print("[DEBUG] Tracking disabled.")
 
                 cv2.imshow("Tello Tracking", tracked_frame)
 
@@ -69,7 +66,6 @@ def main():
     except Exception as e:
         print(f"[ERROR] Failed to start: {e}")
     finally:
-        drone.land()
         drone.cleanup()
         print("[INFO] Program ended.")
 
