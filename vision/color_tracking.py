@@ -2,7 +2,7 @@ import cv2
 import numpy as np
 
 class ColorTracker:
-    def __init__(self, lower_hsv=(51,54,39), upper_hsv=(140,206, 225)):
+    def __init__(self, lower_hsv=(51,54,40), upper_hsv=(140,206, 225)):
 
         self.lower_hsv = np.array(lower_hsv)
         self.upper_hsv = np.array(upper_hsv)
