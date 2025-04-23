@@ -20,7 +20,9 @@ class TelloController:
         if frame is None:
             print("[WARN] No frame received from drone.")
             return None
-        return cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+        frame = cv2.convertScaleAbs(frame, alpha=1.2, beta=20)
+        frame = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
+        return frame
 
     def cleanup(self):
         try:
@@ -39,3 +41,6 @@ class TelloController:
 
     def land(self):
         self.drone.land()
+
+    def send_rc(self, lr, fb, ud, yaw):
+        self.drone.send_rc_control(lr, fb, ud, yaw)
